@@ -4,6 +4,7 @@ import * as Accordion from "@radix-ui/react-accordion";
 import { Check, ChevronDown, Minus, Sparkles, X } from "lucide-react";
 import { Badge, ButtonLink, Card, SectionHeading } from "@/components/ui";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion";
+import { GITHUB_REPO } from "@/lib/site";
 
 const TIERS = [
   {
@@ -19,7 +20,7 @@ const TIERS = [
       "Unlimited requests, no metering",
     ],
     cta: "Deploy on your infra",
-    href: "https://github.com/carltine/carltine",
+    href: GITHUB_REPO,
     highlighted: false,
   },
   {
@@ -225,7 +226,7 @@ export function Cta() {
                 Try the router free
               </ButtonLink>
               <ButtonLink
-                href="https://github.com/carltine/carltine"
+                href={GITHUB_REPO}
                 variant="secondary"
                 size="lg"
                 external

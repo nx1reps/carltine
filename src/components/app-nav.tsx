@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { GithubIcon } from "@/components/brand-icons";
 import { cn } from "@/lib/utils";
+import { CarltineMark } from "@/components/brand";
+import { GITHUB_REPO } from "@/lib/site";
 
 const NAV = [
   { label: "Ledger", href: "/app" },
@@ -18,11 +20,8 @@ export function AppNav() {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-background/80 backdrop-blur-xl">
       <div className="container-page flex h-16 items-center justify-between gap-6">
-        <Link href="/" className="flex items-center gap-2 font-semibold">
-          <span className="flex size-7 items-center justify-center rounded-md bg-accent/15 ring-1 ring-accent/30">
-            <span className="size-2 rounded-full bg-accent" />
-          </span>
-          Carltine
+        <Link href="/" className="text-accent">
+          <CarltineMark withWordmark />
         </Link>
 
         <nav className="flex items-center gap-1">
@@ -45,7 +44,7 @@ export function AppNav() {
             );
           })}
           <a
-            href="https://github.com/carltine/carltine"
+            href={GITHUB_REPO}
             target="_blank"
             rel="noreferrer noopener"
             aria-label="GitHub"

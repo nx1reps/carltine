@@ -173,6 +173,28 @@ label {
 
 /* ---- Motion ---------------------------------------------------------- */
 
+/* Slow rotation on the brand mark's outer ring. Long duration because a fast
+   spin reads as loading, and this mark is decorative rather than busy. */
+@keyframes carltine-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* A soft sweep for the install-command copy button feedback. */
+@keyframes carltine-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
 /* Applied to elements before they animate in, to avoid a flash of the
    final state during hydration. */
 .reveal-init {
@@ -189,5 +211,11 @@ label {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+  }
+
+  /* The rotating brand ring is decorative, so it stops outright rather than
+     spinning once at 0.001ms, which still renders a visible sweep. */
+  [style*="carltine-spin"] {
+    animation: none !important;
   }
 }

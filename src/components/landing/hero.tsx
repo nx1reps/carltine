@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowRight, Sparkles, Terminal } from "lucide-react";
+import { ArrowRight, Terminal } from "lucide-react";
 import { GithubIcon } from "@/components/brand-icons";
 import { ButtonLink, Badge } from "@/components/ui";
 import { Backdrop } from "@/components/motion";
+import { CarltineMarkAnimated } from "@/components/brand";
+import { GITHUB_CLONE_URL, GITHUB_REPO } from "@/lib/site";
 
 /**
  * Hero.
@@ -17,7 +19,7 @@ import { Backdrop } from "@/components/motion";
 
 // The package is not published yet, so the copy block gives a command that
 // actually works today rather than one that 404s on the registry.
-const INSTALL = "git clone https://github.com/carltine/carltine";
+const INSTALL = `git clone ${GITHUB_CLONE_URL}`;
 
 function CopyableInstall() {
   const [copied, setCopied] = useState(false);
@@ -47,12 +49,16 @@ function CopyableInstall() {
   );
 }
 
+/**
+ * Shape of the routing response, as a partial because these fields come from a
+ * network call. Every consumer treats them as optional.
+ */
 interface DemoResult {
-  chosen: string;
-  difficulty: number;
-  savingsPct: number;
-  reasons: string[];
-  simulated: boolean;
+  chosen?: string;
+  difficulty?: number;
+  savingsPct?: number;
+  reasons?: string[];
+  simulated?: boolean;
 }
 
 /**
@@ -62,7 +68,11 @@ interface DemoResult {
  * of the money, but displaying "100% cheaper" reads as marketing rather than
  * measurement, which is the exact impression this product exists to avoid.
  */
-function formatSavings(pct: number): string {
+function formatSavings(pct: number | undefined | null): string {
+  // Defensive: the demo renders from an API response, and a missing or failed
+  // field must not take down the whole landing page. TypeScript cannot catch
+  // this because the response type is a claim about a remote server.
+  if (typeof pct !== "number" || !Number.isFinite(pct)) return "—";
   if (pct >= 99.5) return "≈99%";
   if (pct >= 10) return `${pct.toFixed(0)}%`;
   return `${pct.toFixed(1)}%`;
@@ -170,19 +180,21 @@ export function HeroDemo() {
           >
             <div>
               <span className="text-accent">← </span>
-              <span className="text-foreground">{result.chosen}</span>
+              <span className="text-foreground">{result.chosen ?? "—"}</span>
               {result.simulated && (
                 <span className="ml-2 text-warn">[simulated · no provider key set]</span>
               )}
             </div>
             <div className="text-muted">
-              difficulty {result.difficulty.toFixed(2)} ·{" "}
-              <span className="text-accent">
-                {formatSavings(result.savingsPct)} cheaper
-              </span>{" "}
-              than the frontier default
+              difficulty{" "}
+              {typeof result.difficulty === "number" ? result.difficulty.toFixed(2) : "—"}{" "}
+              ·{" "}
+              <span className="text-accent">{formatSavings(result.savingsPct)}</span>{" "}
+              cheaper than the frontier default
             </div>
-            <div className="truncate text-subtle">{result.reasons[0]}</div>
+            {result.reasons?.[0] && (
+              <div className="truncate text-subtle">{result.reasons[0]}</div>
+            )}
           </motion.div>
         )}
       </div>
@@ -203,7 +215,7 @@ export function Hero() {
               transition={{ duration: 0.5 }}
             >
               <Badge tone="accent">
-                <Sparkles className="size-3" />
+                <CarltineMarkAnimated className="text-accent" />
                 Open source · self-host in one command
               </Badge>
             </motion.div>
@@ -244,7 +256,7 @@ export function Hero() {
                 Try the router
               </ButtonLink>
               <ButtonLink
-                href="https://github.com/carltine/carltine"
+                href={GITHUB_REPO}
                 variant="ghost"
                 size="lg"
                 external

@@ -12,7 +12,6 @@ import { Analytics } from "@/components/analytics";
  * credentials we do not have and must not invent.
  */
 
-const GITHUB_REPO = "https://github.com/carltine/carltine";
 
 /** X (formerly Twitter) intent URL, built without a third-party script. */
 export function shareOnX({ text, url }: { text: string; url: string }) {
@@ -91,4 +90,4 @@ export function NewsletterForm() {
   );
 }
 
-export { Analytics, GITHUB_REPO };
+export { Analytics };

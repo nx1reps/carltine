@@ -3,6 +3,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { Hero } from "@/components/landing/hero";
 import { Features, HowItWorks, Proof, Stats, Moat } from "@/components/landing/sections";
 import { Pricing, Faq, Cta, FAQS } from "@/components/landing/pricing-faq";
+import { Graphics } from "@/components/landing/graphics";
 import { StructuredData } from "@/components/structured-data";
 
 export default function LandingPage() {
@@ -16,6 +17,7 @@ export default function LandingPage() {
           <Features />
         </div>
         <Stats />
+        <Graphics />
         <div id="how">
           <HowItWorks />
         </div>

@@ -202,8 +202,10 @@ export async function POST(request: NextRequest) {
         },
         carltine: {
           recordId,
+          chosen: decision.chosen.id,
           routedTo: decision.chosen.id,
           servedBy: servedBy.id,
+          savingsPct: vsFrontier.savingsPct,
           fellBack: servedBy.id !== decision.chosen.id,
           attempts: attempts.map((a) => ({ model: a.model.id, ok: a.ok, error: a.error })),
           tier: decision.chosen.tier,
@@ -251,6 +253,9 @@ export async function POST(request: NextRequest) {
       },
       carltine: {
         recordId,
+        // `chosen` is the stable key across all three response shapes. The
+        // others are additive detail.
+        chosen: decision.chosen.id,
         routedTo: decision.chosen.id,
         servedBy: null,
         fellBack: false,
@@ -260,6 +265,7 @@ export async function POST(request: NextRequest) {
         estimatedCostUsd: decision.chosenCostUsd,
         frontierCostUsd: vsFrontier.frontierCostUsd,
         savingsUsd: vsFrontier.frontierCostUsd - decision.chosenCostUsd,
+        savingsPct: vsFrontier.savingsPct,
         simulated: true,
         catalogStale: isCatalogStale(),
         storage: store.storageMode(),

@@ -1,5 +1,6 @@
 import { GithubIcon, LinkedinIcon, XIcon } from "@/components/brand-icons";
 import { Badge } from "@/components/ui";
+import { GITHUB_REPO } from "@/lib/site";
 
 const SITEMAP = [
   {
@@ -17,7 +18,7 @@ const SITEMAP = [
       { label: "Quickstart", href: "/docs#quickstart" },
       { label: "Self-hosting", href: "/docs#self-hosting" },
       { label: "Configuration", href: "/docs#configuration" },
-      { label: "GitHub", href: "https://github.com/carltine/carltine" },
+      { label: "GitHub", href: GITHUB_REPO },
     ],
   },
   {
@@ -32,7 +33,7 @@ const SITEMAP = [
 ] as const;
 
 const SOCIAL = [
-  { label: "GitHub", href: "https://github.com/carltine/carltine", Icon: GithubIcon },
+  { label: "GitHub", href: GITHUB_REPO, Icon: GithubIcon },
   { label: "X", href: "https://x.com/carltine", Icon: XIcon },
   { label: "LinkedIn", href: "https://www.linkedin.com/company/carltine", Icon: LinkedinIcon },
 ] as const;

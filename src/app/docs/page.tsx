@@ -1,5 +1,6 @@
 import { Badge, Card } from "@/components/ui";
 import { Reveal } from "@/components/motion";
+import { GITHUB_CLONE_URL } from "@/lib/site";
 
 function Code({ children }: { children: string }) {
   return (
@@ -111,7 +112,7 @@ print(resp.carltine["savingsPct"])`}</Code>
               environment variables at all it stores the chain in a local file,
               which is fine for local use.
             </p>
-            <Code>{`git clone https://github.com/carltine/carltine
+            <Code>{`git clone ${GITHUB_CLONE_URL}
 cd carltine
 npm install
 npm run seed

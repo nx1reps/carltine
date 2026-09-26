@@ -1,0 +1,50 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "24"
+  # The Next.js adapter ships with Next 16; declaring it explicitly means the
+  # deploy does not depend on Netlify's runtime autodetection succeeding.
+  NEXT_TELEMETRY_DISABLED = "1"
+
+[[plugins]]
+  package = "@netlify/plugin-next"
+
+# Serverless functions on Netlify have an ephemeral filesystem. Without the D1
+# variables the chain falls back to a local file and resets on every cold start,
+# so /api/route refuses to serve unrecorded requests. Set these in the site
+# environment before promoting to production.
+#
+#   CARLTINE_INGEST_SECRET    openssl rand -hex 32
+#   CARLTINE_D1_ACCOUNT_ID    from `wrangler d1 create carltine`
+#   CARLTINE_D1_DATABASE_ID   from `wrangler d1 create carltine`
+#   CARLTINE_CF_API_TOKEN     D1:Edit scoped token
+#
+# CARLTINE_API_KEYS          comma-separated; unset means the write API is open
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# The ledger is the product. A cached index would serve a stale savings figure,
+# and worse, could show a chain as intact when it is not.
+[[headers]]
+  for = "/app"
+  [headers.values]
+    Cache-Control = "no-store"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "no-store"
+
+[[redirects]]
+  from = "/github"
+  to = "https://github.com/nx1reps/carltine"
+  status = 302
+  force = false

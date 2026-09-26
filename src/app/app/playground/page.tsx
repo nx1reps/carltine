@@ -6,22 +6,23 @@ import { Badge, Button, Card, DataRow } from "@/components/ui";
 import { Backdrop } from "@/components/motion";
 import { MODELS } from "@/lib/catalog";
 
+/** Partial because every field arrives over the network. */
 interface Decision {
-  chosen: string;
-  chosenLabel: string;
-  tier: number;
-  difficulty: number;
-  reasons: string[];
-  considered: string[];
-  contributors: string[];
-  estimatedCostUsd: number;
-  frontierCostUsd: number;
-  savingsUsd: number;
-  savingsPct: number;
-  simulated: boolean;
-  catalogStale: boolean;
-  storage: string;
-  recordId: string | null;
+  chosen?: string;
+  chosenLabel?: string;
+  tier?: number;
+  difficulty?: number;
+  reasons?: string[];
+  considered?: string[];
+  contributors?: string[];
+  estimatedCostUsd?: number;
+  frontierCostUsd?: number;
+  savingsUsd?: number;
+  savingsPct?: number;
+  simulated?: boolean;
+  catalogStale?: boolean;
+  storage?: string;
+  recordId?: string | null;
   error?: string;
 }
 
@@ -38,7 +39,8 @@ const PRESETS = [
   { label: "Long context", prompt: "Summarize the following thread and identify the open questions:\n" + "The team discussed the migration timeline at length. ".repeat(60) },
 ] as const;
 
-function usd(n: number): string {
+function usd(n: number | undefined | null): string {
+  if (typeof n !== "number" || !Number.isFinite(n)) return "—";
   if (n === 0) return "$0";
   if (n < 0.000001) return "<$0.000001";
   if (n < 0.01) return `$${n.toFixed(6)}`;
@@ -51,7 +53,10 @@ function usd(n: number): string {
  * reads as a marketing claim rather than a measurement, and this product's whole
  * position is that its numbers are auditable.
  */
-function formatSavings(pct: number): string {
+function formatSavings(pct: number | undefined | null): string {
+  // Defensive: fields come from a network response, so a missing value must
+  // render as a dash rather than throwing inside a React render.
+  if (typeof pct !== "number" || !Number.isFinite(pct)) return "—";
   if (pct >= 99.5) return "≈99%";
   if (pct >= 10) return `${pct.toFixed(0)}%`;
   return `${pct.toFixed(1)}%`;
@@ -220,10 +225,13 @@ export default function PlaygroundPage() {
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Badge tone="accent">
                     <Cpu className="size-3" />
-                    tier {result.tier}
+                    tier {result.tier ?? "—"}
                   </Badge>
                   <Badge tone="sky">
-                    difficulty {result.difficulty.toFixed(2)}
+                    difficulty{" "}
+                    {typeof result.difficulty === "number"
+                      ? result.difficulty.toFixed(2)
+                      : "—"}
                   </Badge>
                   {result.simulated && <Badge tone="warn">simulated response</Badge>}
                   {result.catalogStale && <Badge tone="warn">pricing is stale</Badge>}
@@ -258,18 +266,18 @@ export default function PlaygroundPage() {
               <Card>
                 <div className="mb-3 text-sm font-semibold">Why</div>
                 <ul className="space-y-2">
-                  {result.reasons.map((r, i) => (
+                  {(result.reasons ?? []).map((r, i) => (
                     <li key={i} className="flex gap-2 text-xs text-muted">
                       <ArrowRight className="mt-0.5 size-3 shrink-0 text-accent" />
                       <span>{r}</span>
                     </li>
                   ))}
                 </ul>
-                {result.considered.length > 1 && (
+                {(result.considered?.length ?? 0) > 1 && (
                   <div className="mt-4 border-t border-line pt-3">
                     <div className="text-xs text-muted">Candidates considered</div>
                     <div className="mt-1.5 flex flex-wrap gap-1.5">
-                      {result.considered.map((id) => (
+                      {(result.considered ?? []).map((id) => (
                         <span
                           key={id}
                           className="rounded bg-surface-2 px-1.5 py-0.5 font-mono text-[10px] text-muted"

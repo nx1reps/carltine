@@ -13,7 +13,8 @@
     "test:router": "tsx scripts/router-check.ts",
     "setup": "bash scripts/setup.sh",
     "verify": "tsx scripts/verify.ts",
-    "test:setup": "tsx scripts/test-setup.ts"
+    "test:setup": "tsx scripts/test-setup.ts",
+    "test:fallback": "tsx scripts/test-fallback.ts"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.20",

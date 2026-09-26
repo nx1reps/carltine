@@ -123,6 +123,15 @@ else
   die "routing checks failed"
 fi
 
+step "Verifying provider fallback"
+if npm run test:fallback --silent; then
+  ok "fallback checks passed"
+else
+  die "fallback checks failed. A fallback that picks a weaker model turns a visible
+   outage into a silent quality regression, which is the failure this product exists
+   to prevent."
+fi
+
 step "Verifying tamper detection"
 if npm run test:chain --silent; then
   ok "tamper-detection checks passed"

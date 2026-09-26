@@ -31,6 +31,7 @@ verify() {
   npm run test:chain || die "tamper-detection tests failed"
   npm run test:router || die "routing tests failed"
   npm run test:setup || die "setup regression tests failed"
+  npm run test:fallback || die "fallback tests failed"
   npm run build >/dev/null || die "build failed"
   ok "build"
 }

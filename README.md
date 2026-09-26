@@ -91,6 +91,7 @@ Pages: `/`, `/app`, `/app/playground`, `/app/chain`, `/docs`, `/about`,
 npm run test:chain   # tamper detection: 3 attack modes
 npm run test:router  # routing policy: 32 checks
 npm run test:setup   # setup regression: does the seed agree with the app?
+npm run test:fallback # provider fallback: never escalates downwards
 npm run verify       # check the chain on this machine
 ```
 

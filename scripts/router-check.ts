@@ -6,6 +6,9 @@
  * because that produces a bad answer rather than a visible error, so several
  * cases below assert the model is NOT too cheap.
  */
+// MUST be first: resolves CARLTINE_INGEST_SECRET from .env.local exactly as the
+// Next.js server does, so seeded records verify against the running app.
+import "./load-env";
 import { route, scoreDifficulty } from "../src/lib/router";
 import { MODELS } from "../src/lib/catalog";
 

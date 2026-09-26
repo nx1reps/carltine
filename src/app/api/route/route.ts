@@ -6,7 +6,7 @@ import { hasKey, streamProvider, UpstreamError } from "@/lib/providers";
 import * as store from "@/lib/store";
 import { digestOf } from "@/lib/sign";
 import { requireKey } from "@/lib/auth";
-import { checkQuota, quotaHeaders } from "@/lib/quota";
+import { checkQuota, clientAddress, quotaHeaders } from "@/lib/quota";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const quota = checkQuota(auth.keyId);
+  const quota = checkQuota(auth.keyId, Date.now(), clientAddress(request.headers));
   if (!quota.ok) {
     return NextResponse.json(
       { error: { message: quota.reason, type: "quota_exceeded" } },
@@ -206,6 +206,7 @@ export async function POST(request: NextRequest) {
           routedTo: decision.chosen.id,
           servedBy: servedBy.id,
           savingsPct: vsFrontier.savingsPct,
+          savingsUsd: vsFrontier.frontierCostUsd - decision.chosenCostUsd,
           fellBack: servedBy.id !== decision.chosen.id,
           attempts: attempts.map((a) => ({ model: a.model.id, ok: a.ok, error: a.error })),
           tier: decision.chosen.tier,

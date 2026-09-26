@@ -16,6 +16,9 @@
  *
  * Usage: npm run test:chain
  */
+// MUST be first: resolves CARLTINE_INGEST_SECRET from .env.local exactly as the
+// Next.js server does, so seeded records verify against the running app.
+import "./load-env";
 import { execFileSync } from "node:child_process";
 import { promises as fs } from "node:fs";
 import os from "node:os";

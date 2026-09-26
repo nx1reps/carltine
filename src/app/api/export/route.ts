@@ -38,10 +38,16 @@ export async function GET(request: NextRequest) {
   const bundle = {
     issuer: "Carltine",
     generatedAt: new Date().toISOString(),
-    standard: {
-      regulation: "EU AI Act",
-      articles: ["12 (record-keeping)", "14 (human oversight)"],
-    },
+    // Describes what this artifact is, rather than asserting a regulatory
+    // standard. The previous version claimed "EU AI Act, articles 12 and 14",
+    // inherited from when this project was a compliance log. Nothing here is
+    // certified against anything, and putting a regulation number on an audit
+    // bundle is exactly the kind of unsupported claim that destroys trust in
+    // the one artifact whose entire value is being trustworthy.
+    contents:
+      "Tamper-evident record of LLM routing decisions: the model chosen, the " +
+      "signals behind it, the cost comparison, and the hash chain linking each " +
+      "record to the one before it.",
     recordCount: records.length,
     verification: chain,
     // Signature over the head hash, so a recipient can prove the bundle

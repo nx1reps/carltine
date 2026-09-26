@@ -89,7 +89,9 @@ Pages: `/`, `/app`, `/app/playground`, `/app/chain`, `/docs`, `/about`,
 
 ```bash
 npm run test:chain   # tamper detection: 3 attack modes
-npm run test:router  # routing policy: 20 checks
+npm run test:router  # routing policy: 32 checks
+npm run test:setup   # setup regression: does the seed agree with the app?
+npm run verify       # check the chain on this machine
 ```
 
 `test:chain` covers the property the product rests on:
@@ -108,12 +110,27 @@ because the following record still commits to the old hash.
 chosen model is **not** too cheap — under-routing produces a silently bad
 answer, which is worse than overpaying a fraction of a cent.
 
+`test:setup` exists because of the worst bug this project has had. `npm run
+seed` runs under tsx, which did not read `.env.local`, so it signed the seeded
+records with a generated fallback key while the dev server verified them with
+`CARLTINE_INGEST_SECRET`. Every record failed its signature check, so a new user
+following the quickstart opened the ledger to *"record 0 was not signed by this
+ingest service"*. Typecheck, lint, the build, and both other suites all passed
+the entire time, because each only ever ran one process; reproducing it takes
+two that disagree. The test now runs the real seed and a real verification in
+separate processes and fails if they ever diverge again.
+
+`npm run verify` is the same check as a command, which is what `setup.sh` runs
+before it reports success. If you ever change `CARLTINE_INGEST_SECRET`, the
+existing records were signed with the old key and the chain will correctly
+report itself broken; delete `.carltine/` and re-run setup to start fresh.
+
 ## Configuration
 
 | Variable | Required | Purpose |
 |---|---|---|
 | `CARLTINE_INGEST_SECRET` | shared envs | HMAC key for ingest signing |
-| `CARLTINE_API_KEYS` | recommended | Comma-separated keys, stored as SHA-256 hashes |
+| `CARLTINE_API_KEYS` | recommended | Comma-separated keys, stored as SHA-256 hashes. Unset means the write API is open, which is what keeps the free tier signup-free; it is then limited to 500 requests/day per client address. |
 | `CARLTINE_D1_ACCOUNT_ID` | durable deploy | Cloudflare D1 |
 | `CARLTINE_D1_DATABASE_ID` | durable deploy | Cloudflare D1 |
 | `CARLTINE_CF_API_TOKEN` | durable deploy | Cloudflare D1 (needs D1:Edit) |

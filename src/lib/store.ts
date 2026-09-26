@@ -283,27 +283,31 @@ export async function stats() {
 
 /** CSV for the auditor who does not want to run anything. */
 export function toCsv(records: AgentActionRecord[]): string {
+  // Column order is the order a reader needs them in, and the always-empty
+  // columns are omitted.
+  //
+  // The record type still carries the EU AI Act fields from the schema this
+  // started as, but humanPrincipalId, oversightActorId, oversightReason and
+  // riskClass are never populated for a routing decision. Exporting them put
+  // four permanently-blank columns in front of anyone opening the file, which
+  // reads as an unfinished export rather than as a deliberate schema.
   const columns = [
     "seq",
-    "id",
     "occurredAt",
-    "actorType",
-    "actorId",
-    "humanPrincipalId",
-    "agentVersion",
     "action",
     "targetSystem",
     "targetResource",
     "authorizationBasis",
     "grantedScope",
     "scopeExceeded",
-    "oversightMode",
-    "oversightActorId",
-    "oversightReason",
-    "riskClass",
     "outcome",
     "inputDigest",
     "outputDigest",
+    "id",
+    "actorType",
+    "actorId",
+    "agentVersion",
+    "oversightMode",
     "prevHash",
     "hash",
     "signature",

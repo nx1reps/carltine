@@ -1,6 +1,7 @@
 import { Badge, Card } from "@/components/ui";
 import { MarketingPage } from "@/components/marketing-layout";
 import { availableProviders } from "@/lib/providers";
+import { isAuthOpen } from "@/lib/auth";
 import { MODELS, isCatalogStale, catalogAgeDays, CATALOG_VERIFIED_AT } from "@/lib/catalog";
 import * as store from "@/lib/store";
 
@@ -21,6 +22,7 @@ export const metadata = {
 export default async function StatusPage() {
   const chain = await store.verifyChain();
   const providers = availableProviders();
+  const authOpen = isAuthOpen();
   const allProviderIds = [...new Set(MODELS.map((m) => m.provider))];
 
   return (
@@ -65,6 +67,22 @@ export default async function StatusPage() {
           </div>
           <Badge tone={store.storageMode() === "d1" ? "accent" : "warn"}>
             {store.storageMode() === "d1" ? "durable" : "not deploy-safe"}
+          </Badge>
+        </div>
+      </Card>
+
+      <Card className="panel">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <div className="text-sm font-medium">Write access</div>
+            <div className="mt-1 text-xs text-muted">
+              {authOpen
+                ? "Open. No API key required, limited to 500 requests/day per address."
+                : "API keys required. Every request is attributed to a key."}
+            </div>
+          </div>
+          <Badge tone={authOpen ? "warn" : "accent"}>
+            {authOpen ? "open · rate-limited" : "keys required"}
           </Badge>
         </div>
       </Card>

@@ -188,7 +188,7 @@ export function Proof() {
   "contributors": ["1 code block"],
   "estimatedCostUsd": 0.00000085,
   "frontierCostUsd": 0.00135,
-  "savingsPct": 93.7,
+  "savingsUsd": 0.00135,
   "prevHash": "0f1e6348e47d9568…",
   "hash": "d7d36ef1c2fedfe2…"
 }`}

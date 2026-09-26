@@ -6,6 +6,9 @@
  * cap was exceeded. A seed made entirely of easy wins would misrepresent how
  * the thing behaves on real traffic.
  */
+// MUST be first: resolves CARLTINE_INGEST_SECRET from .env.local exactly as the
+// Next.js server does, so seeded records verify against the running app.
+import "./load-env";
 import { append, verifyChain, all } from "../src/lib/store";
 import { route, savingsVsFrontier } from "../src/lib/router";
 import { catalogAgeDays } from "../src/lib/catalog";

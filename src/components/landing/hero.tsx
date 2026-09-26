@@ -56,6 +56,7 @@ function CopyableInstall() {
 interface DemoResult {
   chosen?: string;
   difficulty?: number;
+  savingsUsd?: number;
   savingsPct?: number;
   reasons?: string[];
   simulated?: boolean;
@@ -76,6 +77,23 @@ function formatSavings(pct: number | undefined | null): string {
   if (pct >= 99.5) return "≈99%";
   if (pct >= 10) return `${pct.toFixed(0)}%`;
   return `${pct.toFixed(1)}%`;
+}
+
+/**
+ * Dollars first, percentage second.
+ *
+ * The percentage is demoted to a hint because against a $10/$50 frontier model
+ * nearly every alternative reads as "99%", which is arithmetically true and
+ * informationally useless. The dollar figure is the one that means something,
+ * and leading with it keeps the landing page consistent with the argument the
+ * "The difference" section makes two screens down.
+ */
+function formatSaved(usd: number | undefined | null, pct: number | undefined | null): string {
+  if (typeof usd !== "number" || !Number.isFinite(usd)) return formatSavings(pct);
+  const dollars = usd < 0.01 ? `$${usd.toFixed(5)}` : `$${usd.toFixed(2)}`;
+  return pct != null && Number.isFinite(pct)
+    ? `${dollars} saved (${formatSavings(pct)} vs frontier)`
+    : `${dollars} saved`;
 }
 
 const DEMO_PROMPTS: { label: string; text: string }[] = [
@@ -189,8 +207,10 @@ export function HeroDemo() {
               difficulty{" "}
               {typeof result.difficulty === "number" ? result.difficulty.toFixed(2) : "—"}{" "}
               ·{" "}
-              <span className="text-accent">{formatSavings(result.savingsPct)}</span>{" "}
-              cheaper than the frontier default
+              <span className="text-accent">
+                {formatSaved(result.savingsUsd, result.savingsPct)}
+              </span>{" "}
+              against the frontier default
             </div>
             {result.reasons?.[0] && (
               <div className="truncate text-subtle">{result.reasons[0]}</div>

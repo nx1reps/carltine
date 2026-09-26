@@ -11,7 +11,9 @@
     "seed": "tsx scripts/seed.ts",
     "test:chain": "tsx scripts/test-chain.ts",
     "test:router": "tsx scripts/router-check.ts",
-    "setup": "bash scripts/setup.sh"
+    "setup": "bash scripts/setup.sh",
+    "verify": "tsx scripts/verify.ts",
+    "test:setup": "tsx scripts/test-setup.ts"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.20",
@@ -29,6 +31,7 @@
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
+    "@next/env": "^16.3.6",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

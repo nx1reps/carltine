@@ -1,26 +1,193 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens.
+ *
+ * One accent (a cold mint) carries the product. Everything else is neutral,
+ * because the interface has to sit next to dense log data without competing
+ * with it. Semantic status colors are reserved for chain state so that a
+ * break is impossible to miss.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #05070a;
+  --surface: #0a0d13;
+  --surface-2: #0f141c;
+  --foreground: #eef1f6;
+  --muted: #98a2b3;
+  --subtle: #6b7688;
+  --line: #1b212c;
+  --line-strong: #2a3342;
+
+  --accent: #4ade9b;
+  --accent-dim: #1f7a55;
+  --sky: #6ba8f5;
+  --warn: #f0b429;
+  --danger: #f87171;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-dim: var(--accent-dim);
+  --color-sky: var(--sky);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-sans-stack);
+  --font-mono: var(--font-mono-stack);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans-stack), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 30%, transparent);
+  color: var(--foreground);
+}
+
+/* Tabular figures everywhere numbers must line up. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ---- Layout helpers -------------------------------------------------- */
+
+.container-page {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .container-page {
+    padding-inline: 2rem;
+  }
+}
+
+/* A hairline that fades at both ends, used under section headings. */
+.rule-fade {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--line-strong) 20%,
+    var(--line-strong) 80%,
+    transparent
+  );
+}
+
+/* ---- Surfaces -------------------------------------------------------- */
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.875rem;
+}
+
+.panel-hover {
+  transition:
+    border-color 0.25s ease,
+    background-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.panel-hover:hover {
+  border-color: var(--line-strong);
+  background: var(--surface-2);
+  transform: translateY(-2px);
+}
+
+/* Faint dot grid, used behind hero and section headers. */
+.bg-grid {
+  background-image:
+    radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--line-strong) 90%, transparent) 1px, transparent 0);
+  background-size: 28px 28px;
+}
+
+/* Soft accent glow, layered to avoid a flat single-radial look. */
+.bg-glow {
+  background:
+    radial-gradient(60% 55% at 50% 0%, color-mix(in oklab, var(--accent) 12%, transparent), transparent 70%),
+    radial-gradient(40% 40% at 85% 20%, color-mix(in oklab, var(--sky) 8%, transparent), transparent 70%);
+}
+
+/* ---- Form controls --------------------------------------------------- */
+
+.field {
+  width: 100%;
+  background: #070a0e;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.field:focus {
+  border-color: var(--accent-dim);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 12%, transparent);
+}
+
+.field::placeholder {
+  color: var(--subtle);
+}
+
+select.field {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2398a2b3' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  padding-right: 2rem;
+}
+
+label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.01em;
+}
+
+/* ---- Motion ---------------------------------------------------------- */
+
+/* Applied to elements before they animate in, to avoid a flash of the
+   final state during hydration. */
+.reveal-init {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

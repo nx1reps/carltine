@@ -17,7 +17,11 @@ const TIERS = [
       "Tamper-evident chain with signing",
       "Audit bundle and CSV export",
       "Head-hash anchoring",
-      "Unlimited requests, no metering",
+      // Was "Unlimited requests, no metering", which stopped being true when
+      // the open tier gained a cap. Saying it anyway would be the exact kind
+      // of unverified claim the rest of this page argues against, and a
+      // self-hoster who hits 429 on day one has been told a lie.
+      "You set the limits (500/day until you configure a key)",
     ],
     cta: "Deploy on your infra",
     href: GITHUB_REPO,
@@ -31,7 +35,7 @@ const TIERS = [
     features: [
       "Everything in Self-hosted",
       "Hosted routing endpoint",
-      "5,000 requests per day",
+      "500 requests/day without a key, 5,000 with one",
       "Multi-provider fallback",
       "Community support",
     ],
@@ -62,7 +66,7 @@ const TIERS = [
 export const FAQS = [
   {
     q: "Is this just OpenRouter with fewer features?",
-    a: "No. OpenRouter aggregates models and takes a margin on tokens. Carltine never touches your tokens: you hold the provider key, we route the call. That is why the free tier can be genuinely unlimited, and why self-hosting is a first-class option rather than an escape hatch.",
+    a: "No. OpenRouter aggregates models and takes a margin on tokens. Carltine never touches your tokens: you hold the provider key, we route the call. That is why we can offer a free tier without a card, and why self-hosting is a first-class option rather than an escape hatch.",
   },
   {
     q: "How accurate is the difficulty score?",
@@ -78,7 +82,13 @@ export const FAQS = [
   },
   {
     q: "What if the audit chain goes down?",
-    a: "The routing endpoint fails closed. If a decision cannot be written to the chain, the request is refused rather than served unrecorded. The whole premise is that savings are provable, and that stops being true the moment some requests are silently unrouted.",
+    // This used to claim the endpoint "fails closed" and refuses the request.
+    // It does not: all four record sites swallow a write failure and serve the
+    // call anyway. Refusing to route because an audit write blipped is its own
+    // kind of wrong, so the behaviour is deliberate, but it was being sold as
+    // the opposite of what it does. The guarantee that actually holds is the
+    // one below, and it is the one that matters for the savings claim.
+    a: "The request is still served, because refusing to route because an audit write blipped trades one kind of outage for another. What we do guarantee is that it cannot be counted as a saving: every reported figure is computed from records that are actually in the chain, so an unrecorded request is excluded from the totals rather than quietly inflating them. Responses carry x-carltine-recorded, and /status shows the chain state, so you can always tell whether the numbers cover everything you sent.",
   },
   {
     q: "Can I run it against my own models?",

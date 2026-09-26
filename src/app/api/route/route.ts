@@ -126,6 +126,9 @@ export async function POST(request: NextRequest) {
         connection: "keep-alive",
         "x-carltine-model": decision.chosen.id,
         "x-carltine-record": recordId ?? "",
+        // The request is still served when the chain write fails, so say so
+        // rather than leaving an empty record header to be interpreted.
+        "x-carltine-recorded": recordId !== null ? "true" : "false",
         ...quotaHeaders(quota),
       },
     });
@@ -202,6 +205,7 @@ export async function POST(request: NextRequest) {
         },
         carltine: {
           recordId,
+          recorded: recordId !== null,
           chosen: decision.chosen.id,
           routedTo: decision.chosen.id,
           servedBy: servedBy.id,
@@ -219,7 +223,7 @@ export async function POST(request: NextRequest) {
           storage: store.storageMode(),
         },
       },
-      { headers: quotaHeaders(quota) },
+      { headers: { ...quotaHeaders(quota), "x-carltine-recorded": recordId !== null ? "true" : "false" } },
     );
   }
 
@@ -254,6 +258,10 @@ export async function POST(request: NextRequest) {
       },
       carltine: {
         recordId,
+        // Explicit rather than inferred from a null recordId. A request that
+        // could not be written to the chain is still served, so the caller has to be
+        // able to tell the two cases apart without inspecting a string.
+        recorded: recordId !== null,
         // `chosen` is the stable key across all three response shapes. The
         // others are additive detail.
         chosen: decision.chosen.id,
@@ -272,7 +280,7 @@ export async function POST(request: NextRequest) {
         storage: store.storageMode(),
       },
     },
-    { headers: quotaHeaders(quota) },
+    { headers: { ...quotaHeaders(quota), "x-carltine-recorded": recordId !== null ? "true" : "false" } },
   );
 }
 

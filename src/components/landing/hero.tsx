@@ -287,8 +287,8 @@ export function Hero() {
               className="enter mt-4 text-xs text-subtle"
               style={{ "--enter-delay": "0.32s" } as React.CSSProperties}
             >
-              Bring your own provider key. No signup, no card, no request
-              metering on the free tier.
+              Bring your own provider key. No signup, no card, and we never
+              bill you for tokens.
             </p>
           </div>
 

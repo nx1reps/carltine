@@ -4,12 +4,11 @@
 
 [build.environment]
   NODE_VERSION = "24"
-  # The Next.js adapter ships with Next 16; declaring it explicitly means the
-  # deploy does not depend on Netlify's runtime autodetection succeeding.
   NEXT_TELEMETRY_DISABLED = "1"
 
-[[plugins]]
-  package = "@netlify/plugin-next"
+# No [[plugins]] block on purpose. Netlify's Next 16 runtime auto-registers
+# @netlify/plugin-nextjs. Declaring the older @netlify/plugin-next as well
+# registered the adapter twice, and the resolved config showed both entries.
 
 # Serverless functions on Netlify have an ephemeral filesystem. Without the D1
 # variables the chain falls back to a local file and resets on every cold start,

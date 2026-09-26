@@ -1,5 +1,7 @@
 # Carltine
 
+[![Deploy to Netlify](https://img.shields.io/badge/deploy-Netlify-00c7b1?logo=netlify&logoColor=white)](https://app.netlify.com/start/deploy?repository=https://github.com/nx1reps/carltine)
+
 Route every LLM call to the cheapest model that can actually do the job — and
 write every routing decision to a tamper-evident ledger, so the savings are
 provable rather than claimed.
@@ -169,10 +171,34 @@ properly rather than approximately.
 
 ## Deploying
 
+**Easiest — one click, no CLI.** Use the Deploy to Netlify button at the top of
+this file. Netlify builds the repo and gives you a site; you claim it into your
+own account at the end. Then set the `CARLTINE_*` variables below in the site
+environment, or the ledger will not survive a cold start.
+
+**From the CLI:**
+
 ```bash
-./scripts/setup.sh --d1     # provision D1, print what to paste
-npx netlify deploy --prod   # or: npx vercel
+npx netlify login           # opens a browser, this is the one signup you need
+npx netlify deploy --prod
 ```
+
+Or `./scripts/deploy.sh all`, which typechecks, lints, runs both test suites,
+builds, pushes to GitHub, and then deploys.
+
+**Before you go live, set these in the site environment.** Netlify functions
+have an ephemeral filesystem, so without D1 the chain lives in a local file
+that resets on every cold start:
+
+| Variable | How to get it |
+| --- | --- |
+| `CARLTINE_D1_ACCOUNT_ID` | `npx wrangler d1 create carltine` |
+| `CARLTINE_D1_DATABASE_ID` | same command |
+| `CARLTINE_CF_API_TOKEN` | Cloudflare dashboard, D1:Edit scope |
+| `CARLTINE_INGEST_SECRET` | `openssl rand -hex 32` |
+| `CARLTINE_API_KEYS` | comma-separated; unset means the write API is open |
+
+`./scripts/setup.sh --d1` creates the database and prints these for you.
 
 Note that carltine.com already points at a Netlify deploy serving an unrelated
 project; publishing to that site will replace it.

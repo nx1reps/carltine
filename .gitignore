@@ -44,3 +44,11 @@ next-env.d.ts
 
 # carltine local chain data
 .carltine/
+
+# Next on Netlify
+/out_publish
+/out_functions
+/404.html
+
+# Netlify CLI build cache, created by any `netlify deploy` run.
+.netlify/

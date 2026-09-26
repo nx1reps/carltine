@@ -17,3 +17,11 @@ export const GITHUB_CLONE_URL = `${GITHUB_REPO}.git`;
 
 /** Issues, for the "report a problem" links. */
 export const GITHUB_ISSUES = `${GITHUB_REPO}/issues`;
+
+/**
+ * Netlify's one-click deploy. Builds this repo and hands the visitor a site
+ * they can claim, which is the only signup-free path for a serverless app:
+ * `netlify deploy --allow-anonymous` refuses to publish functions.
+ */
+export const NETLIFY_DEPLOY_URL =
+  `https://app.netlify.com/start/deploy?repository=${encodeURIComponent(GITHUB_REPO)}`;

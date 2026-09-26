@@ -32,6 +32,14 @@ export function GithubIcon(props: IconProps) {
   );
 }
 
+export function NetlifyIcon(props: IconProps) {
+  return (
+    <Base {...props}>
+      <path d="M12 0 24 12 12 24 0 12Zm0 5.6 6.4 6.4-6.4 6.4L5.6 12Z" />
+    </Base>
+  );
+}
+
 export function XIcon(props: IconProps) {
   return (
     <Base {...props}>

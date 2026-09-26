@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView, useReducedMotion, type Variants } from "motion/react";
+import { useInView, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -8,10 +8,21 @@ import { cn } from "@/lib/utils";
  * Motion primitives.
  *
  * `Reveal` is the workhorse: sections animate in once when scrolled into view.
- * Reduced-motion is respected globally in CSS, and these components also skip
- * the animation entirely rather than merely shortening it, because a fade that
- * runs for 1ms still leaves a visible repaint for some users.
+ *
+ * It is deliberately CSS-driven rather than built on motion's `whileInView`.
+ * `whileInView` writes `opacity: 0` into the server HTML and depends on an
+ * IntersectionObserver firing to undo it, which means no JavaScript, a
+ * JavaScript error, or an anchor jump past a section all produce a permanently
+ * blank region rather than a missing animation. Here the element is visible in
+ * the HTML and only hidden once `js-reveal` is on <html>, which the inline
+ * bootstrap in the document head sets. The observer in
+ * components/reveal-observer.tsx only ever adds a class.
+ *
+ * Reduced motion needs no branch here: the CSS media query removes the
+ * transition and the movement, and the observer still runs.
  */
+
+type RevealTag = "div" | "section" | "li" | "span" | "ul" | "article";
 
 export function Reveal({
   children,
@@ -22,24 +33,31 @@ export function Reveal({
   children: React.ReactNode;
   className?: string;
   delay?: number;
-  as?: "div" | "section" | "li" | "span";
+  as?: RevealTag;
 }) {
-  const reduce = useReducedMotion();
-  const Comp = motion[as] as typeof motion.div;
-  if (reduce) return <Comp className={className}>{children}</Comp>;
+  const Comp = as;
   return (
     <Comp
-      className={className}
-      initial={{ opacity: 0, y: 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
+      className={cn("reveal", className)}
+      // Consumed by the transition-delay in globals.css. A custom property
+      // rather than an inline transition so the delay and the transition stay
+      // defined together in one place.
+      style={delay ? ({ "--reveal-delay": `${delay}s` } as React.CSSProperties) : undefined}
     >
       {children}
     </Comp>
   );
 }
 
+/**
+ * A group whose children cascade in.
+ *
+ * The cascade is CSS `transition-delay` via `:nth-child` rather than motion's
+ * `staggerChildren` variants, for the same reason as `Reveal`: the container
+ * renders visible in the HTML. It also keeps the DOM identical to what it was
+ * before, which matters because every caller puts these items directly inside
+ * a CSS grid.
+ */
 export function Stagger({
   children,
   className,
@@ -47,38 +65,26 @@ export function Stagger({
   children: React.ReactNode;
   className?: string;
 }) {
-  const variants: Variants = {
-    hidden: {},
-    show: { transition: { staggerChildren: 0.07 } },
-  };
-  return (
-    <motion.div
-      className={className}
-      variants={variants}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, margin: "-60px" }}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={cn("stagger", className)}>{children}</div>;
 }
 
 export function StaggerItem({
   children,
   className,
+  delay,
 }: {
   children: React.ReactNode;
   className?: string;
+  /** Overrides the automatic per-child cascade. Rarely needed. */
+  delay?: number;
 }) {
-  const variants: Variants = {
-    hidden: { opacity: 0, y: 16 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
-  };
   return (
-    <motion.div className={className} variants={variants}>
+    <div
+      className={cn("reveal", className)}
+      style={delay ? ({ "--reveal-delay": `${delay}s` } as React.CSSProperties) : undefined}
+    >
       {children}
-    </motion.div>
+    </div>
   );
 }
 

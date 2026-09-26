@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import { Analytics } from "@/components/analytics";
+import { REVEAL_BOOTSTRAP, RevealObserver } from "@/components/reveal-observer";
 import "./globals.css";
 
 const inter = Inter({ variable: "--font-sans-stack", subsets: ["latin"] });
@@ -46,10 +47,19 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Marks the document as JS-capable before first paint, so the CSS
+            scroll reveal only ever hides content it is going to animate back
+            in. Runs before hydration on purpose: adding the class from an
+            effect instead would paint the page visible and then snap it to
+            hidden. */}
+        <script dangerouslySetInnerHTML={{ __html: REVEAL_BOOTSTRAP }} />
+      </head>
       <body
         className={`${inter.variable} ${geistSans.variable} ${geistMono.variable}`}
       >
+        <RevealObserver />
         <Analytics />
         {children}
       </body>

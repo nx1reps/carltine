@@ -195,10 +195,96 @@ label {
   }
 }
 
-/* Applied to elements before they animate in, to avoid a flash of the
-   final state during hydration. */
-.reveal-init {
+/* ---------------------------------------------------------------------------
+   Scroll reveal.
+
+   Content is visible by default and is only hidden once JavaScript has
+   confirmed it can animate it back in. The `js-reveal` class is added to <html>
+   by an inline script in the document head, before first paint.
+
+   The previous implementation used motion's `whileInView`, which renders
+   `opacity: 0` into the server HTML and relies on an IntersectionObserver
+   firing to undo it. That has two failure modes that both produce a blank
+   page rather than a missing animation:
+
+     - no JavaScript, or a JS error, and the content never appears at all
+     - a deep link or an anchor jump skips past elements, they never intersect,
+       and `once: true` means they stay hidden permanently
+
+   Gating the hidden state on a class the browser only adds when JS is running
+   means the failure mode is "no animation", which is the correct failure mode
+   for a decoration.
+--------------------------------------------------------------------------- */
+
+.js-reveal .reveal {
   opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition:
+    opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0s);
+  will-change: opacity, transform;
+}
+
+.js-reveal .reveal.is-in {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No fade, no movement, no delay. The state is applied by the same
+     observer, so this only removes the transition rather than duplicating
+     the reveal logic in JS. */
+  .js-reveal .reveal {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Cascade for Stagger groups. The delay is per child position rather than
+   computed in JS, so the container needs no observer of its own and the
+   markup is identical to a plain grid. Twelve covers every group on the site;
+   beyond that the extra children simply appear together. */
+.js-reveal .stagger > .reveal:nth-child(1)  { transition-delay: 0s; }
+.js-reveal .stagger > .reveal:nth-child(2)  { transition-delay: 0.07s; }
+.js-reveal .stagger > .reveal:nth-child(3)  { transition-delay: 0.14s; }
+.js-reveal .stagger > .reveal:nth-child(4)  { transition-delay: 0.21s; }
+.js-reveal .stagger > .reveal:nth-child(5)  { transition-delay: 0.28s; }
+.js-reveal .stagger > .reveal:nth-child(6)  { transition-delay: 0.35s; }
+.js-reveal .stagger > .reveal:nth-child(7)  { transition-delay: 0.42s; }
+.js-reveal .stagger > .reveal:nth-child(8)  { transition-delay: 0.49s; }
+.js-reveal .stagger > .reveal:nth-child(9)  { transition-delay: 0.56s; }
+.js-reveal .stagger > .reveal:nth-child(10) { transition-delay: 0.63s; }
+.js-reveal .stagger > .reveal:nth-child(11) { transition-delay: 0.7s; }
+.js-reveal .stagger > .reveal:nth-child(12) { transition-delay: 0.77s; }
+
+/* ---------------------------------------------------------------------------
+   Entrance animation for the hero.
+
+   A keyframe rather than a transition, because there is no state change to
+   transition from: it plays once on load. `both` fill holds the first frame
+   during the delay, which is what produces the staggered cascade.
+
+   Gated on `js-reveal` for the same reason as everything above. The hero
+   <h1> was previously server-rendered at opacity: 0, so the single most
+   important thing on the page was invisible without JavaScript.
+--------------------------------------------------------------------------- */
+@keyframes carltine-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--enter-y, 16px), 0)
+      scale(var(--enter-scale, 1));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.js-reveal .enter {
+  animation: carltine-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--enter-delay, 0s);
 }
 
 @media (prefers-reduced-motion: reduce) {

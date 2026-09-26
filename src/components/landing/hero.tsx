@@ -229,44 +229,34 @@ export function Hero() {
       <div className="container-page">
         <div className="grid items-center gap-14 lg:grid-cols-2">
           <div>
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
+            <div className="enter" style={{ "--enter-y": "12px" } as React.CSSProperties}>
               <Badge tone="accent">
                 <CarltineMarkAnimated className="text-accent" />
                 Open source · self-host in one command
               </Badge>
-            </motion.div>
+            </div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.05 }}
-              className="mt-5 text-balance text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl"
+            <h1
+              className="enter mt-5 text-balance text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl"
+              style={{ "--enter-delay": "0.05s" } as React.CSSProperties}
             >
               Route every LLM call to the
               <span className="text-accent"> cheapest model that can do the job</span>.
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.12 }}
-              className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-muted sm:text-lg"
+            <p
+              className="enter mt-5 max-w-xl text-pretty text-base leading-relaxed text-muted sm:text-lg"
+              style={{ "--enter-delay": "0.12s" } as React.CSSProperties}
             >
               Most teams pin one frontier model and pay frontier prices for
               classifying a support ticket. Carltine scores each request, picks a
               capable-enough model, and writes the decision to a tamper-evident
               ledger so the savings are provable rather than claimed.
-            </motion.p>
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.18 }}
-              className="mt-8 flex flex-wrap items-center gap-3"
+            <div
+              className="enter mt-8 flex flex-wrap items-center gap-3"
+              style={{ "--enter-delay": "0.18s" } as React.CSSProperties}
             >
               <ButtonLink href="/app" size="lg">
                 See the live ledger
@@ -284,35 +274,32 @@ export function Hero() {
                 <GithubIcon className="size-4" />
                 GitHub
               </ButtonLink>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.26 }}
-              className="mt-8"
+            <div
+              className="enter mt-8"
+              style={{ "--enter-delay": "0.26s" } as React.CSSProperties}
             >
               <CopyableInstall />
-            </motion.div>
+            </div>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.32 }}
-              className="mt-4 text-xs text-subtle"
+            <p
+              className="enter mt-4 text-xs text-subtle"
+              style={{ "--enter-delay": "0.32s" } as React.CSSProperties}
             >
               Bring your own provider key. No signup, no card, no request
               metering on the free tier.
-            </motion.p>
+            </p>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.15 }}
+          <div
+            className="enter"
+            style={
+              { "--enter-scale": "0.98", "--enter-delay": "0.15s" } as React.CSSProperties
+            }
           >
             <HeroDemo />
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
